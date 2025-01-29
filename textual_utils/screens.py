@@ -67,7 +67,7 @@ class ConfirmScreen(ModalScreen[bool]):
         self.dialog.border_title = self.dialog_title
         self.dialog.border_subtitle = self.dialog_subtitle
 
-        self.dialog.styles.grid_columns = str(ceil(len(self.question) / 2))
+        self.dialog.styles.grid_columns = str(ceil((len(self.question) - 2) / 2))
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "yes":
