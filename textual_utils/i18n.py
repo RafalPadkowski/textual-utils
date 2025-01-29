@@ -5,20 +5,22 @@ The i18n module provides internationalization services based on the gettext modu
 import gettext
 from pathlib import Path
 
+_localedir: Path
+
 DEFAULT_LANGUAGE = "en"
 
 _language: str = DEFAULT_LANGUAGE
 _translation: gettext.GNUTranslations
 
 
-def _(message: str) -> str:
+def init_translation(localedir: Path) -> None:
     """
-    Return the localized translation of message based on the current language.
+    Init translation services.
+    Set locale directory.
     """
-    if _language == DEFAULT_LANGUAGE:
-        return message
-    else:
-        return _translation.gettext(message)
+    global _localedir
+
+    _localedir = localedir
 
 
 def set_translation(language: str) -> None:
@@ -28,12 +30,25 @@ def set_translation(language: str) -> None:
     """
     global _language
     global _translation
+    global _localedir
 
     _language = language
 
     if language != DEFAULT_LANGUAGE:
         _translation = gettext.translation(
             domain="messages",
-            localedir=Path(__file__).parent / "locales",
+            localedir=_localedir,
             languages=[language],
         )
+
+
+def _(message: str) -> str:
+    """
+    Return the localized translation of message based on the current language.
+    """
+    global _translation
+
+    if _language == DEFAULT_LANGUAGE:
+        return message
+    else:
+        return _translation.gettext(message)
