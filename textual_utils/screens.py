@@ -1,3 +1,5 @@
+from math import ceil
+
 from rich.text import Text
 from textual.app import ComposeResult
 from textual.containers import Grid
@@ -39,3 +41,36 @@ class AboutScreen(ModalScreen):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "ok":
             self.app.pop_screen()
+
+
+class ConfirmScreen(ModalScreen[bool]):
+    CSS_PATH = ["screens.tcss", "confirm_screen.tcss"]
+
+    def __init__(self, dialog_title: str, dialog_subtitle: str, question: str) -> None:
+        super().__init__()
+
+        self.dialog_title = dialog_title
+        self.dialog_subtitle = dialog_subtitle
+        self.question = question
+
+    def compose(self) -> ComposeResult:
+        self.dialog = Grid(
+            Label(_(self.question), id="question"),
+            Button(_("Yes"), variant="primary", id="yes"),
+            Button(_("No"), variant="error", id="no"),
+            id="confirm_dialog",
+        )
+
+        yield self.dialog
+
+    def on_mount(self) -> None:
+        self.dialog.border_title = _(self.dialog_title)
+        self.dialog.border_subtitle = _(self.dialog_subtitle)
+
+        self.dialog.styles.grid_columns = str(ceil(len(self.question) / 2))
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "yes":
+            self.dismiss(True)
+        else:
+            self.dismiss(False)
