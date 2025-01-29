@@ -1,7 +1,8 @@
 from textual.events import Click
 from textual.widgets._header import HeaderIcon
 
-from textual_utils import AboutScreen, AppMetadata
+from textual_utils.app_metadata import AppMetadata
+from textual_utils.screens import AboutScreen
 
 
 class AboutHeaderIcon(HeaderIcon):

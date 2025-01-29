@@ -4,7 +4,8 @@ from textual.containers import Grid
 from textual.screen import ModalScreen
 from textual.widgets import Button, Label, Link
 
-from textual_utils import AppMetadata, _
+from textual_utils.app_metadata import AppMetadata
+from textual_utils.i18n import _
 
 
 class AboutScreen(ModalScreen):
