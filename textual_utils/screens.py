@@ -55,7 +55,7 @@ class ConfirmScreen(ModalScreen[bool]):
 
     def compose(self) -> ComposeResult:
         self.dialog = Grid(
-            Label(_(self.question), id="question"),
+            Label(self.question, id="question"),
             Button(_("Yes"), variant="primary", id="yes"),
             Button(_("No"), variant="error", id="no"),
             id="confirm_dialog",
@@ -64,8 +64,8 @@ class ConfirmScreen(ModalScreen[bool]):
         yield self.dialog
 
     def on_mount(self) -> None:
-        self.dialog.border_title = _(self.dialog_title)
-        self.dialog.border_subtitle = _(self.dialog_subtitle)
+        self.dialog.border_title = self.dialog_title
+        self.dialog.border_subtitle = self.dialog_subtitle
 
         self.dialog.styles.grid_columns = str(ceil(len(self.question) / 2))
 
