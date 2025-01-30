@@ -1,4 +1,5 @@
 from math import ceil
+from typing import Any
 
 from rich.text import Text
 from textual.app import ComposeResult
@@ -8,6 +9,8 @@ from textual.widgets import Button, Label, Link
 
 from textual_utils.app_metadata import AppMetadata
 from textual_utils.i18n import _
+from textual_utils.setting import Setting
+from textual_utils.setting_row import SettingRow
 
 
 class AboutScreen(ModalScreen):
@@ -74,3 +77,56 @@ class ConfirmScreen(ModalScreen[bool]):
             self.dismiss(True)
         else:
             self.dismiss(False)
+
+
+class SettingsScreen(ModalScreen[dict[str, Any] | None]):
+    CSS_PATH = ["screens.tcss", "settings_screen.tcss"]
+
+    def __init__(
+        self,
+        *setting_rows: SettingRow,
+        dialog_title: str,
+        dialog_subtitle: str,
+        dialog_width: int,
+        dialog_grid_columns: str,
+    ) -> None:
+        super().__init__()
+
+        self.dialog_title = dialog_title
+        self.dialog_subtitle = dialog_subtitle
+
+        self.dialog_width = dialog_width
+        self.dialog_grid_columns = dialog_grid_columns
+
+        self.settings: dict[str, Setting] = {
+            setting_row.key: Setting(label=setting_row.label, widget=setting_row.widget)
+            for setting_row in setting_rows
+        }
+
+    def compose(self) -> ComposeResult:
+        self.dialog = Grid(id="settings_dialog")
+
+        with self.dialog:
+            for setting in self.settings.values():
+                yield Label(_(setting.label))
+                yield setting.widget
+
+            yield Button(_("Save"), variant="primary", id="save")
+            yield Button(_("Cancel"), variant="error", id="cancel")
+
+    def on_mount(self) -> None:
+        self.dialog.border_title = _(self.dialog_title)
+        self.dialog.border_subtitle = _(self.dialog_subtitle)
+
+        self.dialog.styles.width = self.dialog_width
+        self.dialog.styles.grid_columns = self.dialog_grid_columns
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        if event.button.id == "save":
+            settings_dict: dict[str, Any] = {
+                setting_key: self.settings[setting_key].widget.value
+                for setting_key in self.settings.keys()
+            }
+            self.dismiss(settings_dict)
+        else:
+            self.dismiss(None)
