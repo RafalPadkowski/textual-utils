@@ -1,6 +1,6 @@
 # textual-utils
 
-Variious utilities for use with the Textual package.
+Variious utilities for use with the Textual package
 
 ## Features
 
