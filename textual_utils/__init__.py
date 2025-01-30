@@ -1,4 +1,4 @@
-from textual_utils.about_header_icon import AboutHeaderIcon
+from textual_utils.about_header_icon import mount_about_header_icon
 from textual_utils.app_metadata import AppMetadata
 from textual_utils.i18n import _, init_translation, set_translation
 from textual_utils.screens import AboutScreen, ConfirmScreen, SettingsScreen
@@ -8,7 +8,7 @@ __all__ = [
     "init_translation",
     "set_translation",
     "_",
-    "AboutHeaderIcon",
+    "mount_about_header_icon",
     "AppMetadata",
     "AboutScreen",
     "ConfirmScreen",
