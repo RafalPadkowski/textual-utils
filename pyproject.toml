@@ -3,6 +3,7 @@ name = "textual-utils"
 version = "1.0.0"
 description = "Utilities for use with the Textual package"
 authors = ["Rafal Padkowski <rafaelp@poczta.onet.pl>"]
+license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
