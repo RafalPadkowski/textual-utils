@@ -52,9 +52,9 @@ class ConfirmScreen(ModalScreen[bool]):
     def __init__(self, dialog_title: str, dialog_subtitle: str, question: str) -> None:
         super().__init__()
 
-        self.dialog_title = dialog_title
-        self.dialog_subtitle = dialog_subtitle
-        self.question = question
+        self.dialog_title = _(dialog_title)
+        self.dialog_subtitle = _(dialog_subtitle)
+        self.question = _(question)
 
     def compose(self) -> ComposeResult:
         self.dialog = Grid(
@@ -92,14 +92,16 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
     ) -> None:
         super().__init__()
 
-        self.dialog_title = dialog_title
-        self.dialog_subtitle = dialog_subtitle
+        self.dialog_title = _(dialog_title)
+        self.dialog_subtitle = _(dialog_subtitle)
 
         self.dialog_width = dialog_width
         self.dialog_grid_columns = dialog_grid_columns
 
         self.settings: dict[str, Setting] = {
-            setting_row.key: Setting(label=setting_row.label, widget=setting_row.widget)
+            setting_row.key: Setting(
+                label=_(setting_row.label), widget=setting_row.widget
+            )
             for setting_row in setting_rows
         }
 
@@ -108,15 +110,15 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
 
         with self.dialog:
             for setting in self.settings.values():
-                yield Label(_(setting.label))
+                yield Label(setting.label)
                 yield setting.widget
 
             yield Button(_("Save"), variant="primary", id="save")
             yield Button(_("Cancel"), variant="error", id="cancel")
 
     def on_mount(self) -> None:
-        self.dialog.border_title = _(self.dialog_title)
-        self.dialog.border_subtitle = _(self.dialog_subtitle)
+        self.dialog.border_title = self.dialog_title
+        self.dialog.border_subtitle = self.dialog_subtitle
 
         self.dialog.styles.width = self.dialog_width
         self.dialog.styles.grid_columns = self.dialog_grid_columns
