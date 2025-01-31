@@ -9,7 +9,6 @@ from textual.widgets import Button, Label, Link
 
 from textual_utils.app_metadata import AppMetadata
 from textual_utils.i18n import _
-from textual_utils.setting import Setting
 from textual_utils.setting_row import SettingRow
 
 
@@ -84,11 +83,11 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
 
     def __init__(
         self,
-        *setting_rows: SettingRow,
         dialog_title: str,
         dialog_subtitle: str,
         dialog_width: int,
         dialog_grid_columns: str,
+        setting_rows: dict[str, SettingRow],
     ) -> None:
         super().__init__()
 
@@ -98,20 +97,15 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
         self.dialog_width = dialog_width
         self.dialog_grid_columns = dialog_grid_columns
 
-        self.settings: dict[str, Setting] = {
-            setting_row.key: Setting(
-                label=_(setting_row.label), widget=setting_row.widget
-            )
-            for setting_row in setting_rows
-        }
+        self.setting_rows = setting_rows
 
     def compose(self) -> ComposeResult:
         self.dialog = Grid(id="settings_dialog")
 
         with self.dialog:
-            for setting in self.settings.values():
-                yield Label(setting.label)
-                yield setting.widget
+            for setting_row in self.setting_rows.values():
+                yield Label(setting_row.label)
+                yield setting_row.widget
 
             yield Button(_("Save"), variant="primary", id="save")
             yield Button(_("Cancel"), variant="error", id="cancel")
@@ -126,8 +120,8 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "save":
             settings_dict: dict[str, Any] = {
-                setting_key: self.settings[setting_key].widget.value
-                for setting_key in self.settings.keys()
+                setting_key: self.setting_rows[setting_key].widget.value
+                for setting_key in self.setting_rows.keys()
             }
             self.dismiss(settings_dict)
         else:
