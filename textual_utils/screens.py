@@ -104,7 +104,7 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
 
         with self.dialog:
             for setting_row in self.setting_rows.values():
-                yield Label(setting_row.label)
+                yield Label(_(setting_row.label))
                 yield setting_row.widget
 
             yield Button(_("Save"), variant="primary", id="save")
