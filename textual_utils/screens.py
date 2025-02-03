@@ -86,7 +86,6 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
         dialog_title: str,
         dialog_subtitle: str,
         dialog_width: int,
-        dialog_grid_columns: str,
         setting_rows: dict[str, SettingRow],
     ) -> None:
         super().__init__()
@@ -95,7 +94,6 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
         self.dialog_subtitle = _(dialog_subtitle)
 
         self.dialog_width = dialog_width
-        self.dialog_grid_columns = dialog_grid_columns
 
         self.setting_rows = setting_rows
 
@@ -115,7 +113,6 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
         self.dialog.border_subtitle = self.dialog_subtitle
 
         self.dialog.styles.width = self.dialog_width
-        self.dialog.styles.grid_columns = self.dialog_grid_columns
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "save":

@@ -1,6 +1,7 @@
 #settings_dialog {
     grid-size: 2;
     grid-rows: 4;
+    grid-columns: 1fr
 }
 
 #settings_dialog Label {
@@ -14,7 +15,6 @@
 
  #settings_dialog Select:focus > SelectCurrent {
     border: tall $border;
-    background-tint: $foreground 5%;
   }
 
 #settings_dialog Switch {
