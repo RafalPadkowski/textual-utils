@@ -5,7 +5,7 @@ from rich.text import Text
 from textual.app import ComposeResult
 from textual.containers import Grid
 from textual.screen import ModalScreen
-from textual.widgets import Button, Label, Link
+from textual.widgets import Button, Label, Link, Select
 
 from textual_utils.app_metadata import AppMetadata
 from textual_utils.i18n import _
@@ -85,17 +85,17 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
         self,
         dialog_title: str,
         dialog_subtitle: str,
-        dialog_width: int,
         setting_rows: dict[str, SettingRow],
+        dialog_width: int | None = None,
     ) -> None:
         super().__init__()
 
         self.dialog_title = _(dialog_title)
         self.dialog_subtitle = _(dialog_subtitle)
 
-        self.dialog_width = dialog_width
-
         self.setting_rows = setting_rows
+
+        self.dialog_width = dialog_width
 
     def compose(self) -> ComposeResult:
         self.dialog = Grid(id="settings_dialog")
@@ -112,7 +112,23 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
         self.dialog.border_title = self.dialog_title
         self.dialog.border_subtitle = self.dialog_subtitle
 
-        self.dialog.styles.width = self.dialog_width
+        if self.dialog_width is not None:
+            self.dialog.styles.width = self.dialog_width
+        else:
+            max_label_length = max(
+                len(_(setting_row.label)) for setting_row in self.setting_rows.values()
+            )
+
+            max_option_length = max(
+                len(str(option[0]))
+                for setting_row in self.setting_rows.values()
+                if isinstance(setting_row.widget, Select)
+                for option in setting_row.widget._options
+            )
+
+            max_length = max(max_label_length, max_option_length + 8)
+
+            self.dialog.styles.width = 2 * max_length + 9
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "save":

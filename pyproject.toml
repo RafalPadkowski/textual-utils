@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "textual-utils"
-version = "1.0.3"
+version = "1.0.4"
 description = "Utilities for use with the Textual package"
 authors = ["Rafal Padkowski <rafaelp@poczta.onet.pl>"]
 license = "MIT"
