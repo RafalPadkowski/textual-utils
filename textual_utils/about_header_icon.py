@@ -1,5 +1,5 @@
 from textual.app import App
-from textual.events import Click
+from textual.events import Click, Mount
 from textual.widgets import Header
 from textual.widgets._header import HeaderIcon
 
@@ -14,8 +14,14 @@ class AboutHeaderIcon(HeaderIcon):
         self.icon = icon
         self.app_metadata = app_metadata
 
-    async def on_click(self, _event: Click) -> None:
+    def on_mount(self, event: Mount) -> None:  # type: ignore
+        self.tooltip = "About"
+        event.prevent_default()
+
+    def on_click(self, event: Click) -> None:  # type: ignore
         self.app.push_screen(AboutScreen(self.app_metadata))
+        event.prevent_default()
+        event.stop()
 
 
 async def mount_about_header_icon(
