@@ -1,3 +1,5 @@
+from typing import Any
+
 from textual.app import App
 from textual.events import Click, Mount
 from textual.widgets import Header
@@ -19,13 +21,13 @@ class AboutHeaderIcon(HeaderIcon):
         event.prevent_default()
 
     def on_click(self, event: Click) -> None:  # type: ignore
-        self.app.push_screen(AboutScreen(self.app_metadata))
+        self.app.push_screen(AboutScreen(self.app_metadata))  # type: ignore
         event.prevent_default()
         event.stop()
 
 
 async def mount_about_header_icon(
-    current_app: App,
+    current_app: App[Any],
     icon: str,
     app_metadata: AppMetadata,
 ) -> None:
