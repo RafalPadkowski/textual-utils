@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 readme = "README.md"
 license = "MIT"
 dependencies = [
+    "i18n",
     "textual>=2.1.2",
     "tomli-w>=1.2.0,<2",
 ]
@@ -14,3 +15,6 @@ dependencies = [
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"
+
+[tool.uv.sources]
+i18n = { git = "https://github.com/RafalPadkowski/i18n.git" }
