@@ -1,6 +1,7 @@
 from math import ceil
 from typing import Any
 
+from i18n import tr
 from rich.text import Text
 from textual.app import ComposeResult
 from textual.containers import Grid
@@ -8,7 +9,6 @@ from textual.screen import ModalScreen
 from textual.widgets import Button, Label, Link, Select
 
 from textual_utils.app_metadata import AppMetadata
-from textual_utils.i18n import _
 from textual_utils.setting_row import SettingRow
 
 
@@ -28,7 +28,7 @@ class AboutScreen(ModalScreen):
 
         self.dialog = Grid(
             Label(Text(app_name, style="bold green")),
-            Label(_(self.app_metadata.author)),
+            Label(tr(self.app_metadata.author)),
             Link(self.app_metadata.email, url=f"mailto:{self.app_metadata.email}"),
             Button("Ok", variant="primary", id="ok"),
             id="about_dialog",
@@ -37,7 +37,7 @@ class AboutScreen(ModalScreen):
         yield self.dialog
 
     def on_mount(self) -> None:
-        self.dialog.border_title = _("About")
+        self.dialog.border_title = tr("About")
         self.dialog.border_subtitle = self.app_metadata.name
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
@@ -51,15 +51,15 @@ class ConfirmScreen(ModalScreen[bool]):
     def __init__(self, dialog_title: str, dialog_subtitle: str, question: str) -> None:
         super().__init__()
 
-        self.dialog_title = _(dialog_title)
-        self.dialog_subtitle = _(dialog_subtitle)
-        self.question = _(question)
+        self.dialog_title = tr(dialog_title)
+        self.dialog_subtitle = tr(dialog_subtitle)
+        self.question = tr(question)
 
     def compose(self) -> ComposeResult:
         self.dialog = Grid(
             Label(self.question, id="question"),
-            Button(_("Yes"), variant="primary", id="yes"),
-            Button(_("No"), variant="error", id="no"),
+            Button(tr("Yes"), variant="primary", id="yes"),
+            Button(tr("No"), variant="error", id="no"),
             id="confirm_dialog",
         )
 
@@ -90,8 +90,8 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
     ) -> None:
         super().__init__()
 
-        self.dialog_title = _(dialog_title)
-        self.dialog_subtitle = _(dialog_subtitle)
+        self.dialog_title = tr(dialog_title)
+        self.dialog_subtitle = tr(dialog_subtitle)
 
         self.setting_rows = setting_rows
 
@@ -116,7 +116,7 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
             self.dialog.styles.width = self.dialog_width
         else:
             max_label_length = max(
-                len(_(setting_row.label)) for setting_row in self.setting_rows.values()
+                len(tr(setting_row.label)) for setting_row in self.setting_rows.values()
             )
 
             max_option_length = max(
