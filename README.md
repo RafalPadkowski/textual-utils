@@ -8,8 +8,6 @@ Dialogs - AboutScreen, ConfirmScreen, SettingsScreen
 
 AboutHeaderIcon - replacement for standard HeaderIcon for displaying AboutScreen
 
-i18n - translation services
-
 ## Installation
 
 ```bash
