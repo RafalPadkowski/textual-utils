@@ -6,5 +6,6 @@ class AppMetadata:
     name: str
     version: str
     icon: str
+    description: str
     author: str
     email: str

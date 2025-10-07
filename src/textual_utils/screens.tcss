@@ -1,6 +1,5 @@
 ModalScreen {
     align: center middle;
-    /* background: $background; */
 }
 
 ModalScreen Grid {
@@ -14,6 +13,5 @@ ModalScreen Grid {
 }
 
 ModalScreen Button {
-    margin-top: 1;
     width: 100%;
 }

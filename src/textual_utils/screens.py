@@ -29,6 +29,12 @@ class AboutScreen(ModalScreen[Any]):
 
         self.dialog = Grid(
             Label(Text(app_name, style="bold green")),
+            Label(
+                Text(
+                    tr(self.app_metadata.description),
+                    style="italic cornflowerblue",
+                )
+            ),
             Label(tr(self.app_metadata.author)),
             Link(self.app_metadata.email, url=f"mailto:{self.app_metadata.email}"),
             Button("Ok", variant="primary", id="ok"),
