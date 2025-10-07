@@ -5,6 +5,6 @@ from dataclasses import dataclass
 class AppMetadata:
     name: str
     version: str
-    codename: str
+    icon: str
     author: str
     email: str

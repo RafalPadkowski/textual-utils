@@ -11,14 +11,13 @@ from textual_utils.screens import AboutScreen
 
 
 class AboutHeaderIcon(HeaderIcon):
-    def __init__(
-        self, current_app: App[Any], icon: str, app_metadata: AppMetadata
-    ) -> None:
+    def __init__(self, current_app: App[Any], app_metadata: AppMetadata) -> None:
         super().__init__()
 
         self.current_app = current_app
-        self.icon = icon
         self.app_metadata = app_metadata
+
+        self.icon = app_metadata.icon
 
     @on(Mount)
     def prevent_default_mount(self, event: Mount) -> None:
@@ -31,13 +30,11 @@ class AboutHeaderIcon(HeaderIcon):
 
 
 async def mount_about_header_icon(
-    current_app: App[Any],
-    icon: str,
-    app_metadata: AppMetadata,
+    current_app: App[Any], app_metadata: AppMetadata
 ) -> None:
     header_icon = current_app.query_one(HeaderIcon)
     header_icon.remove()
 
     header = current_app.query_one(Header)
-    about_header_icon = AboutHeaderIcon(current_app, icon, app_metadata)
+    about_header_icon = AboutHeaderIcon(current_app, app_metadata)
     await header.mount(about_header_icon)

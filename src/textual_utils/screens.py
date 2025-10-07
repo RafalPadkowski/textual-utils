@@ -24,7 +24,7 @@ class AboutScreen(ModalScreen[Any]):
     def compose(self) -> ComposeResult:
         app_name = (
             f"{self.app_metadata.name} {self.app_metadata.version}"
-            f"  {self.app_metadata.codename}"
+            f"  {self.app_metadata.icon}"
         )
 
         self.dialog = Grid(
