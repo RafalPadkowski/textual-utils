@@ -1,5 +1,6 @@
 from typing import Any
 
+from textual import on
 from textual.app import App
 from textual.events import Click, Mount
 from textual.widgets import Header
@@ -10,20 +11,23 @@ from textual_utils.screens import AboutScreen
 
 
 class AboutHeaderIcon(HeaderIcon):
-    def __init__(self, icon: str, app_metadata: AppMetadata) -> None:
+    def __init__(
+        self, current_app: App[Any], icon: str, app_metadata: AppMetadata
+    ) -> None:
         super().__init__()
 
+        self.current_app = current_app
         self.icon = icon
         self.app_metadata = app_metadata
 
-    def on_mount(self, event: Mount) -> None:  # type: ignore
-        self.tooltip = "About"
+    @on(Mount)
+    def prevent_default_mount(self, event: Mount) -> None:
         event.prevent_default()
 
-    def on_click(self, event: Click) -> None:  # type: ignore
-        self.app.push_screen(AboutScreen(self.app_metadata))  # type: ignore
+    async def on_click(self, event: Click) -> None:
         event.prevent_default()
         event.stop()
+        self.current_app.push_screen(AboutScreen(self.current_app, self.app_metadata))
 
 
 async def mount_about_header_icon(
@@ -35,5 +39,5 @@ async def mount_about_header_icon(
     header_icon.remove()
 
     header = current_app.query_one(Header)
-    about_header_icon = AboutHeaderIcon(icon, app_metadata)
+    about_header_icon = AboutHeaderIcon(current_app, icon, app_metadata)
     await header.mount(about_header_icon)

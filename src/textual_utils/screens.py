@@ -3,7 +3,7 @@ from typing import Any
 
 from i18n import tr
 from rich.text import Text
-from textual.app import ComposeResult
+from textual.app import App, ComposeResult
 from textual.containers import Grid
 from textual.screen import ModalScreen
 from textual.widgets import Button, Label, Link, Select
@@ -12,12 +12,13 @@ from textual_utils.app_metadata import AppMetadata
 from textual_utils.setting_row import SettingRow
 
 
-class AboutScreen(ModalScreen):
+class AboutScreen(ModalScreen[Any]):
     CSS_PATH = ["screens.tcss", "about_screen.tcss"]
 
-    def __init__(self, app_metadata: AppMetadata) -> None:
+    def __init__(self, current_app: App[Any], app_metadata: AppMetadata) -> None:
         super().__init__()
 
+        self.current_app = current_app
         self.app_metadata = app_metadata
 
     def compose(self) -> ComposeResult:
@@ -42,7 +43,7 @@ class AboutScreen(ModalScreen):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "ok":
-            self.app.pop_screen()
+            self.current_app.pop_screen()
 
 
 class ConfirmScreen(ModalScreen[bool]):
