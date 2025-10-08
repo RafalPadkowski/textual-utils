@@ -3,7 +3,6 @@ ModalScreen {
 }
 
 ModalScreen Grid {
-    grid-gutter: 1 2;
     grid-columns: auto;
     width: auto;
     height: auto;

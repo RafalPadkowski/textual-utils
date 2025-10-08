@@ -6,7 +6,7 @@ from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.containers import Grid
 from textual.screen import ModalScreen
-from textual.widgets import Button, Label, Link, Select
+from textual.widgets import Button, Label, Link, Select, Static
 
 from textual_utils.app_metadata import AppMetadata
 from textual_utils.setting_row import SettingRow
@@ -35,6 +35,7 @@ class AboutScreen(ModalScreen[Any]):
                     style="italic cornflowerblue",
                 )
             ),
+            Static(),
             Label(tr(self.app_metadata.author)),
             Link(self.app_metadata.email, url=f"mailto:{self.app_metadata.email}"),
             Button("Ok", variant="primary", id="ok"),
