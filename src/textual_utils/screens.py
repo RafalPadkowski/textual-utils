@@ -1,4 +1,3 @@
-from math import ceil
 from typing import Any
 
 from i18n import tr
@@ -126,11 +125,11 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
 
         with self.dialog:
             for setting_row in self.setting_rows.values():
-                yield Label(_(setting_row.label))
+                yield Label(tr(setting_row.label))
                 yield setting_row.widget
 
-            yield Button(_("Save"), variant="primary", id="save")
-            yield Button(_("Cancel"), variant="error", id="cancel")
+            yield Button(tr("Save"), variant="primary", id="save")
+            yield Button(tr("Cancel"), variant="error", id="cancel")
 
     def on_mount(self) -> None:
         self.dialog.border_title = self.dialog_title
@@ -147,7 +146,7 @@ class SettingsScreen(ModalScreen[dict[str, Any] | None]):
                 len(str(option[0]))
                 for setting_row in self.setting_rows.values()
                 if isinstance(setting_row.widget, Select)
-                for option in setting_row.widget._options
+                for option in setting_row.widget._options  # pyright: ignore[reportPrivateUsage]
             )
 
             max_length = max(max_label_length, max_option_length + 8)
