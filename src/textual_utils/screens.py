@@ -66,8 +66,11 @@ class ConfirmScreen(ModalScreen[bool]):
     def compose(self) -> ComposeResult:
         self.dialog = Grid(
             Label(self.question, id="question"),
-            Button(tr("Yes"), variant="primary", id="yes"),
-            Button(tr("No"), variant="error", id="no"),
+            Grid(
+                Button(tr("Yes"), variant="primary", id="yes"),
+                Button(tr("No"), variant="error", id="no"),
+                id="buttons",
+            ),
             id="confirm_dialog",
         )
 
@@ -77,7 +80,20 @@ class ConfirmScreen(ModalScreen[bool]):
         self.dialog.border_title = self.dialog_title
         self.dialog.border_subtitle = self.dialog_subtitle
 
-        self.dialog.styles.grid_columns = str(ceil((len(self.question) - 2) / 2))
+        def odd(s: str) -> bool:
+            return len(s) % 2 != 0
+
+        buttons = self.query_one("#buttons", Grid)
+        buttons.styles.grid_gutter_vertical = 3 if odd(self.question) else 2
+
+        yes_str = tr("Yes")
+        no_str = tr("No")
+
+        if odd(yes_str) or odd(no_str):
+            yes_btn = self.query_one("#yes", Button)
+            no_btn = self.query_one("#no", Button)
+
+            yes_btn.styles.min_width = no_btn.styles.min_width = 15
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "yes":

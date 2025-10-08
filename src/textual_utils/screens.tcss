@@ -4,6 +4,7 @@ ModalScreen {
 
 ModalScreen Grid {
     grid-columns: auto;
+    grid-rows: auto;
     width: auto;
     height: auto;
     padding: 1 3;
