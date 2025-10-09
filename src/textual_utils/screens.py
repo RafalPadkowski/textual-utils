@@ -1,14 +1,26 @@
-from typing import Any
+from typing import Any, Union
 
+from config.settings import Setting, SettingBoolean, SettingOptions
 from i18n import tr
 from rich.text import Text
 from textual.app import App, ComposeResult
-from textual.containers import Grid
+from textual.containers import Center, Grid
 from textual.screen import ModalScreen
-from textual.widgets import Button, Label, Link, Select, Static
+from textual.widgets import Button, Label, Link, Select, Static, Switch
 
 from textual_utils.app_metadata import AppMetadata
-from textual_utils.setting_row import SettingRow
+
+BORDER_WIDTH = 1
+PADDING_WIDTH = 3
+BOX_WIDTH = 2 * BORDER_WIDTH + 2 * PADDING_WIDTH
+
+BUTTON_WIDTH = 16
+
+GUTTER_WIDTH = 2
+
+SELECT_BOX_WIDTH = 8
+
+SWITCH_WIDTH = 10
 
 
 class AboutScreen(ModalScreen[Any]):
@@ -18,16 +30,16 @@ class AboutScreen(ModalScreen[Any]):
         super().__init__()
 
         self.current_app = current_app
-        self.app_metadata = app_metadata
 
-    def compose(self) -> ComposeResult:
-        app_name = (
+        self.app_metadata = app_metadata
+        self.app_name = (
             f"{self.app_metadata.name} {self.app_metadata.version}"
             f"  {self.app_metadata.icon}"
         )
 
+    def compose(self) -> ComposeResult:
         self.dialog = Grid(
-            Label(Text(app_name, style="bold green")),
+            Label(Text(self.app_name, style="bold green")),
             Label(
                 Text(
                     tr(self.app_metadata.description),
@@ -37,7 +49,7 @@ class AboutScreen(ModalScreen[Any]):
             Static(),
             Label(tr(self.app_metadata.author)),
             Link(self.app_metadata.email, url=f"mailto:{self.app_metadata.email}"),
-            Button("Ok", variant="primary", id="ok"),
+            Center(Button("Ok", variant="primary", id="ok")),
             id="about_dialog",
         )
 
@@ -46,6 +58,16 @@ class AboutScreen(ModalScreen[Any]):
     def on_mount(self) -> None:
         self.dialog.border_title = tr("About")
         self.dialog.border_subtitle = self.app_metadata.name
+
+        max_label_length = max(
+            len(self.app_name),
+            len(tr(self.app_metadata.description)),
+            len(tr(self.app_metadata.author)),
+            len(self.app_metadata.email),
+        )
+
+        self.dialog.styles.width = BOX_WIDTH + max_label_length
+        self.dialog.styles.min_width = BOX_WIDTH + BUTTON_WIDTH
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "ok":
@@ -79,20 +101,34 @@ class ConfirmScreen(ModalScreen[bool]):
         self.dialog.border_title = self.dialog_title
         self.dialog.border_subtitle = self.dialog_subtitle
 
-        def odd(s: str) -> bool:
+        def odd_len(s: str) -> bool:
             return len(s) % 2 != 0
-
-        buttons = self.query_one("#buttons", Grid)
-        buttons.styles.grid_gutter_vertical = 3 if odd(self.question) else 2
 
         yes_str = tr("Yes")
         no_str = tr("No")
 
-        if odd(yes_str) or odd(no_str):
+        if odd_len(yes_str):
             yes_btn = self.query_one("#yes", Button)
-            no_btn = self.query_one("#no", Button)
+            yes_btn_width = yes_btn.styles.min_width = BUTTON_WIDTH - 1
+        else:
+            yes_btn_width = BUTTON_WIDTH
 
-            yes_btn.styles.min_width = no_btn.styles.min_width = 15
+        if odd_len(no_str):
+            no_btn = self.query_one("#no", Button)
+            no_btn_width = no_btn.styles.min_width = BUTTON_WIDTH - 1
+        else:
+            no_btn_width = BUTTON_WIDTH
+
+        buttons = self.query_one("#buttons", Grid)
+        if odd_len(self.question):
+            btn_gutter_width = buttons.styles.grid_gutter_vertical = GUTTER_WIDTH + 1
+        else:
+            btn_gutter_width = buttons.styles.grid_gutter_vertical = GUTTER_WIDTH
+
+        self.dialog.styles.width = BOX_WIDTH + len(self.question)
+        self.dialog.styles.min_width = (
+            BOX_WIDTH + yes_btn_width + btn_gutter_width + no_btn_width
+        )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "yes":
@@ -101,64 +137,88 @@ class ConfirmScreen(ModalScreen[bool]):
             self.dismiss(False)
 
 
-class SettingsScreen(ModalScreen[dict[str, Any] | None]):
+class SettingsScreen(ModalScreen[tuple[Any, ...] | None]):
     CSS_PATH = ["screens.tcss", "settings_screen.tcss"]
 
     def __init__(
         self,
         dialog_title: str,
         dialog_subtitle: str,
-        setting_rows: dict[str, SettingRow],
-        dialog_width: int | None = None,
+        settings: list[Setting],
     ) -> None:
         super().__init__()
 
         self.dialog_title = tr(dialog_title)
         self.dialog_subtitle = tr(dialog_subtitle)
 
-        self.setting_rows = setting_rows
+        self.settings = settings
 
-        self.dialog_width = dialog_width
+        self.widgets: list[Union[Select[Any], Switch]] = []
 
     def compose(self) -> ComposeResult:
         self.dialog = Grid(id="settings_dialog")
 
-        with self.dialog:
-            for setting_row in self.setting_rows.values():
-                yield Label(tr(setting_row.label))
-                yield setting_row.widget
-
-            yield Button(tr("Save"), variant="primary", id="save")
-            yield Button(tr("Cancel"), variant="error", id="cancel")
-
-    def on_mount(self) -> None:
         self.dialog.border_title = self.dialog_title
         self.dialog.border_subtitle = self.dialog_subtitle
 
-        if self.dialog_width is not None:
-            self.dialog.styles.width = self.dialog_width
+        max_select_width = 0
+        switch_exists = False
+
+        with self.dialog:
+            for setting in self.settings:
+                yield Label(tr(setting.label))
+
+                widget: Select[Any] | Switch | None = None
+
+                if isinstance(setting, SettingOptions):
+                    options = [
+                        (tr(option.display_str), option.value)
+                        for option in setting.options
+                    ]
+                    widget = Select(
+                        options=options,
+                        allow_blank=False,
+                        value=setting.current_value,
+                    )
+                    select_width = max(len(t[0]) for t in options) + SELECT_BOX_WIDTH
+                    widget.styles.width = select_width
+
+                    if select_width > max_select_width:
+                        max_select_width = select_width
+
+                elif isinstance(setting, SettingBoolean):
+                    widget = Switch(value=setting.current_value)
+                    switch_exists = True
+
+                if widget is not None:
+                    yield widget
+                    self.widgets.append(widget)
+
+            yield Grid(
+                Button(tr("Save"), variant="primary", id="save"),
+                Button(tr("Cancel"), variant="error", id="cancel"),
+                id="buttons",
+            )
+
+        label_lengths = [len(tr(setting.label)) for setting in self.settings]
+        max_label_length = 0 if not label_lengths else max(label_lengths)
+
+        if switch_exists:
+            max_widget_width = max(SWITCH_WIDTH, max_select_width)
         else:
-            max_label_length = max(
-                len(tr(setting_row.label)) for setting_row in self.setting_rows.values()
-            )
+            max_widget_width = max_select_width
 
-            max_option_length = max(
-                len(str(option[0]))
-                for setting_row in self.setting_rows.values()
-                if isinstance(setting_row.widget, Select)
-                for option in setting_row.widget._options  # pyright: ignore[reportPrivateUsage]
-            )
+        self.dialog.styles.width = (
+            BOX_WIDTH + max_label_length + GUTTER_WIDTH + max_widget_width
+        )
 
-            max_length = max(max_label_length, max_option_length + 8)
-
-            self.dialog.styles.width = 2 * max_length + 9
+        self.dialog.styles.min_width = (
+            BOX_WIDTH + BUTTON_WIDTH + GUTTER_WIDTH + BUTTON_WIDTH
+        )
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "save":
-            settings_dict: dict[str, Any] = {
-                setting_key: self.setting_rows[setting_key].widget.value
-                for setting_key in self.setting_rows.keys()
-            }
-            self.dismiss(settings_dict)
+            values = tuple(widget.value for widget in self.widgets)
+            self.dismiss(values)
         else:
             self.dismiss(None)

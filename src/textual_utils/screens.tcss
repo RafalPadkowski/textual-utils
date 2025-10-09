@@ -4,7 +4,7 @@ ModalScreen {
 
 ModalScreen Grid {
     grid-columns: auto;
-    grid-rows: auto;
+    grid-gutter: 1 2;
     width: auto;
     height: auto;
     padding: 1 3;
@@ -12,6 +12,12 @@ ModalScreen Grid {
     background: $surface;
 }
 
-ModalScreen Button {
-    width: 100%;
+ModalScreen #buttons {
+    grid-size: 2;
+    column-span: 2;
+    grid-gutter: 1 2;
+    padding: 0 3;
+    border: none;
+    width: 1fr;
+    align-horizontal: center;
 }

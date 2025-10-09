@@ -1,5 +1,7 @@
 #about_dialog {
     grid-size: 1;
+    grid-gutter: 0 0;
+    grid-columns: 1fr;
 }
 
 ModalScreen Link {
