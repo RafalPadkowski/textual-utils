@@ -14,7 +14,7 @@ wheels = [
 [[package]]
 name = "config"
 version = "0.1.0"
-source = { git = "https://github.com/RafalPadkowski/config.git#4b8b189a6bd097d84f7e5cc8f1dea7e146088de0" }
+source = { git = "https://github.com/RafalPadkowski/config.git#2708b8b7fcebd67720fb05a84b0d3c2f2337fc43" }
 
 [[package]]
 name = "i18n"
@@ -139,7 +139,7 @@ wheels = [
 
 [[package]]
 name = "textual-utils"
-version = "2.0.0"
+version = "2.0.1"
 source = { editable = "." }
 dependencies = [
     { name = "config" },

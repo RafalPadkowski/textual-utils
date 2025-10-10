@@ -144,7 +144,7 @@ class SettingsScreen(ModalScreen[tuple[Any, ...] | None]):
         self,
         dialog_title: str,
         dialog_subtitle: str,
-        settings: list[Setting],
+        settings: list[Setting[Any]],
     ) -> None:
         super().__init__()
 
