@@ -151,7 +151,7 @@ dependencies = [
 requires-dist = [
     { name = "config", git = "https://github.com/RafalPadkowski/config.git" },
     { name = "i18n", git = "https://github.com/RafalPadkowski/i18n.git" },
-    { name = "textual", specifier = ">=2.1.2" },
+    { name = "textual", specifier = ">=6.2.1" },
 ]
 
 [[package]]
