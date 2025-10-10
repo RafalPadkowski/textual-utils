@@ -19,4 +19,4 @@ build-backend = "hatchling.build"
 
 [tool.uv.sources]
 i18n = { git = "https://github.com/RafalPadkowski/i18n.git" }
-config = { path = "../config", editable = true }
+config = { git = "https://github.com/RafalPadkowski/config.git" }
