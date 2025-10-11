@@ -27,6 +27,6 @@
 }
 
 #settings_dialog #buttons {
-    padding-top: 2;
+    padding-top: 1;
     align-horizontal: right;
 }

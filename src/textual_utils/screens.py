@@ -1,11 +1,12 @@
 from typing import Any, Union
 
-from config.settings import Setting, SettingBoolean, SettingOptions
+from config.settings import SettingOptions, SettingType
 from i18n import tr
 from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.containers import Center, Grid
 from textual.screen import ModalScreen
+from textual.types import NoSelection
 from textual.widgets import Button, Label, Link, Select, Static, Switch
 
 from textual_utils.app_metadata import AppMetadata
@@ -137,14 +138,14 @@ class ConfirmScreen(ModalScreen[bool]):
             self.dismiss(False)
 
 
-class SettingsScreen(ModalScreen[tuple[Any, ...] | None]):
+class SettingsScreen(ModalScreen[tuple[str | bool, ...] | None]):
     CSS_PATH = ["screens.tcss", "settings_screen.tcss"]
 
     def __init__(
         self,
         dialog_title: str,
         dialog_subtitle: str,
-        settings: list[Setting[Any]],
+        settings: list[SettingType],
     ) -> None:
         super().__init__()
 
@@ -153,7 +154,7 @@ class SettingsScreen(ModalScreen[tuple[Any, ...] | None]):
 
         self.settings = settings
 
-        self.widgets: list[Union[Select[Any], Switch]] = []
+        self.widgets: list[Union[Select[str], Switch]] = []
 
     def compose(self) -> ComposeResult:
         self.dialog = Grid(id="settings_dialog")
@@ -168,7 +169,7 @@ class SettingsScreen(ModalScreen[tuple[Any, ...] | None]):
             for setting in self.settings:
                 yield Label(tr(setting.label))
 
-                widget: Select[Any] | Switch | None = None
+                widget: Select[str] | Switch
 
                 if isinstance(setting, SettingOptions):
                     options = [
@@ -186,13 +187,12 @@ class SettingsScreen(ModalScreen[tuple[Any, ...] | None]):
                     if select_width > max_select_width:
                         max_select_width = select_width
 
-                elif isinstance(setting, SettingBoolean):
+                else:
                     widget = Switch(value=setting.current_value)
                     switch_exists = True
 
-                if widget is not None:
-                    yield widget
-                    self.widgets.append(widget)
+                yield widget
+                self.widgets.append(widget)
 
             yield Grid(
                 Button(tr("Save"), variant="primary", id="save"),
@@ -218,7 +218,14 @@ class SettingsScreen(ModalScreen[tuple[Any, ...] | None]):
 
     def on_button_pressed(self, event: Button.Pressed) -> None:
         if event.button.id == "save":
-            values = tuple(widget.value for widget in self.widgets)
+
+            def value_or_default(
+                v: str | bool | NoSelection, default: str = ""
+            ) -> str | bool:
+                return v if not isinstance(v, NoSelection) else default
+
+            values = tuple(value_or_default(widget.value) for widget in self.widgets)
+
             self.dismiss(values)
         else:
             self.dismiss(None)
