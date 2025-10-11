@@ -14,7 +14,7 @@ wheels = [
 [[package]]
 name = "config"
 version = "0.1.0"
-source = { git = "https://github.com/RafalPadkowski/config.git#2ae815e4a764380626ce407eccdc6eed57669256" }
+source = { git = "https://github.com/RafalPadkowski/config.git#b3449fcef9bc0fa1035ec6bcc3a003a4af76713b" }
 
 [[package]]
 name = "i18n"
@@ -139,7 +139,7 @@ wheels = [
 
 [[package]]
 name = "textual-utils"
-version = "2.0.2"
+version = "2.0.3"
 source = { editable = "." }
 dependencies = [
     { name = "config" },
@@ -151,7 +151,7 @@ dependencies = [
 requires-dist = [
     { name = "config", git = "https://github.com/RafalPadkowski/config.git" },
     { name = "i18n", git = "https://github.com/RafalPadkowski/i18n.git" },
-    { name = "textual", specifier = ">=6.2.1" },
+    { name = "textual", specifier = ">=6.3.0" },
 ]
 
 [[package]]

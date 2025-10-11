@@ -1,6 +1,6 @@
 [project]
 name = "textual-utils"
-version = "2.0.2"
+version = "2.0.3"
 description = "Utilities for use with the Textual package"
 authors = [{ name = "Rafal Padkowski", email = "rafaelp@poczta.onet.pl" }]
 requires-python = ">=3.13"
@@ -9,7 +9,7 @@ license = "MIT"
 dependencies = [
     "config",
     "i18n",
-    "textual>=6.2.1",
+    "textual>=6.3.0",
 ]
 
 [build-system]
