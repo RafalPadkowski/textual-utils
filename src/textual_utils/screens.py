@@ -24,7 +24,7 @@ SELECT_BOX_WIDTH = 8
 SWITCH_WIDTH = 10
 
 
-class AboutScreen(ModalScreen[Any]):
+class AboutScreen(ModalScreen[None]):
     CSS_PATH = ["screens.tcss", "about_screen.tcss"]
 
     def __init__(self, current_app: App[Any], app_metadata: AppMetadata) -> None:
