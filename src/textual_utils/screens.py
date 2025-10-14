@@ -138,7 +138,7 @@ class ConfirmScreen(ModalScreen[bool]):
             self.dismiss(False)
 
 
-class SettingsScreen(ModalScreen[tuple[str | bool, ...] | None]):
+class SettingsScreen(ModalScreen[bool]):
     CSS_PATH = ["screens.tcss", "settings_screen.tcss"]
 
     def __init__(
@@ -167,6 +167,8 @@ class SettingsScreen(ModalScreen[tuple[str | bool, ...] | None]):
 
         with self.dialog:
             for setting in self.settings:
+                setting.old_value = setting.current_value  # type: ignore[assignment]
+
                 yield Label(tr(setting.label))
 
                 widget: Select[str] | Switch
@@ -224,8 +226,9 @@ class SettingsScreen(ModalScreen[tuple[str | bool, ...] | None]):
             ) -> str | bool:
                 return v if not isinstance(v, NoSelection) else default
 
-            values = tuple(value_or_default(widget.value) for widget in self.widgets)
+            for setting, widget in zip(self.settings, self.widgets):
+                setting.current_value = value_or_default(widget.value)  # type: ignore[assignment]
 
-            self.dismiss(values)
+            self.dismiss(True)
         else:
-            self.dismiss(None)
+            self.dismiss(False)
