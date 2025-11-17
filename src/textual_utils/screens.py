@@ -1,13 +1,13 @@
 from typing import Any, Union
 
-from config.settings import SettingOptions, SettingType
-from i18n import tr
 from rich.text import Text
 from textual.app import App, ComposeResult
 from textual.containers import Center, Grid
 from textual.screen import ModalScreen
 from textual.types import NoSelection
 from textual.widgets import Button, Label, Link, Select, Static, Switch
+from tilsit_config.settings import SettingOptions, SettingType
+from tilsit_i18n import tr
 
 from textual_utils.app_metadata import AppMetadata
 
