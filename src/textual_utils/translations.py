@@ -5,6 +5,13 @@ from textual.binding import Binding
 from textual.screen import Screen
 from tilsit_i18n import tr
 
+from .about_header_icon import AboutHeaderIcon
+
+
+def translate_about_header_icon(app: App) -> None:
+    about_header_icon: AboutHeaderIcon = app.query_one(AboutHeaderIcon)
+    about_header_icon.tooltip = tr("About")
+
 
 def translate_bindings(
     screen: App | Screen,
