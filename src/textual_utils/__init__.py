@@ -1,5 +1,6 @@
 from textual_utils.about_header_icon import AboutHeaderIcon, mount_about_header_icon
 from textual_utils.app_metadata import AppMetadata
+from textual_utils.bindings import translate_bindings
 from textual_utils.screens import AboutScreen, ConfirmScreen, SettingsScreen
 
 __all__ = [
@@ -9,4 +10,5 @@ __all__ = [
     "AboutScreen",
     "ConfirmScreen",
     "SettingsScreen",
+    "translate_bindings",
 ]
